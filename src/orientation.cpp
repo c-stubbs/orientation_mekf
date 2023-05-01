@@ -56,7 +56,7 @@ private:
     {
         double dt = (_clk.now() - time).nanoseconds() / 1e9;
         time = _clk.now();
-        RCLCPP_INFO(this->get_logger(), "Timestep: %4.2lf", dt);
+        RCLCPP_INFO_THROTTLE(this->get_logger(),_clk,2000, "Filter Timestep: %4.2lf", dt);
 
         double mag[3] = {msg->magnetic_field.x,
                          msg->magnetic_field.y,

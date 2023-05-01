@@ -20,10 +20,10 @@ public:
     // Attitude Variables
     Vector4d q; // quaternion vector
 
-    // Class Functions & Methods
-    void propagate(double gyro[3], double dt);
-    void time_update(double dt);
-    void measurement_update(double (&q_orient)[4], double accel[3], double mag[3]);
+    // Methods
+    void predict(double gyro[3], double dt);
+    // void time_update(double dt);
+    void update(double (&q_orient)[4], double accel[3], double mag[3]);
     void filter_update(double (&q_orient)[4], double gyro[3], double accel[3], double mag[3], double dt);
 
 private:
@@ -36,9 +36,8 @@ private:
     Matrix<double, 6, 6> R; // measurement noise covariance matrix
 
     // Global Parameter Variables
-    Vector3d g;           // gravity vector
-    Vector3d nav_mag;     // mag measurement in nav frame
-    // Vector3d expected_mag;   // mag at measurement inclination
+    Vector3d g;           // Normalized gravity vector
+    Vector3d mag_ref;     // Normalized mag 
 
     // Propagation Variables
     Matrix4d A; // state transition matrix
@@ -49,23 +48,25 @@ private:
     Matrix3d W; // jacobian of state estimate
 
     // Measurement Update Variables
-    Vector3d a;
-    Vector3d m;
-    Matrix<double, 6, 1> z; // actual measurements
+    Vector3d a; // Acceleration measurement
+    Vector3d m; // Magnetic field measurement
+    Matrix<double, 6, 1> z; // Measurement vector
 
-    Matrix<double, 6, 1> h; // predicted measurements
-    Matrix<double, 6, 1> y; // measurement innovation/residual
-    Matrix<double, 6, 3> H; // observation matrix
+    Matrix<double, 6, 1> h; // predicted state
+    Matrix<double, 6, 1> y; // innovation/residual
+    Matrix<double, 6, 3> H; // measurement sensitivity matrix. See Markley 2003, Utrera 2021
 
-    Matrix<double, 6, 6> S; // covariance of measurement innovation/residual
+    Matrix<double, 6, 6> S; // covariance of innovation/residual
     Matrix<double, 3, 6> K; // Kalman gain
 
     Vector3d err_x; // Error State
     Vector4d err_q; // Error Quaternion
 
-    // Class Functions & Methods
+    // Methods
+
+    // Multiply two quaternions together
     Vector4d quat_multiply(Vector4d a, Vector4d b);
-    double norm(double a, double b);
+    // Create skew-symmetric matrix
     Matrix3d skew(Vector3d x);
 };
 
