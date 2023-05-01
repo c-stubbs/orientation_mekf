@@ -24,12 +24,15 @@ MEKF::MEKF(double gyro_noise, double accel_noise, double mag_noise)
 
     W.setIdentity(); // initialize state estimate Jacobian & state estimate covariance
     P = W * Q * W.transpose();
+
+    magcal_offset << -16.8557, 48.4432, 25.2809; // From MATLAB
+    magcal_rotate.setIdentity(); // From MATLAB
 }
 
 void MEKF::predict(double gyro[3], double dt)
 {
     Vector3d omega;
-    omega << gyro[0] - 0.05, gyro[1], gyro[2];
+    omega << gyro[0], gyro[1], gyro[2];
     /* Eq 2.82 in Howard's Thesis: First order approximation of the quaternion state
         transition matrix. 
         See Also: Eq 20 in Utrera */
@@ -63,6 +66,7 @@ void MEKF::update(double (&q_orient)[4], double accel[3], double mag[3])
 {
     a << accel[0], accel[1], accel[2];
     m << mag[0], mag[1], mag[2];
+    m = (m-magcal_offset); // Calibrate the mag readings
 
     // Eq 2.33 in Howard's Thesis: Basically just from global/intertial frame to body frame
     C(0, 0) = pow(q(0), 2) + pow(q(1), 2) - pow(q(2), 2) - pow(q(3), 2);
