@@ -50,8 +50,8 @@ private:
     // Measurement Update Variables
     Vector3d a; // Acceleration measurement
     Vector3d m; // Magnetic field measurement
-    Vector3d magcal_offset;
-    Matrix<double,3,3> magcal_rotate;
+    Vector3d magcal_offset; // Magnetic field calibration offset
+    Matrix<double,3,3> magcal_rotate; // Magnetic field calibration rotation
     Matrix<double, 6, 1> z; // Measurement vector
 
     Matrix<double, 6, 1> h; // predicted state
