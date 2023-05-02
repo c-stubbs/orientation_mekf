@@ -1,5 +1,3 @@
-// Multiplicative Extended Kalman Filter (MEKF) Header File
-
 #ifndef MEKF_H
 #define MEKF_H
 
@@ -22,9 +20,8 @@ public:
 
     // Methods
     void predict(double gyro[3], double dt);
-    // void time_update(double dt);
-    void update(double (&q_orient)[4], double accel[3], double mag[3]);
-    void filter_update(double (&q_orient)[4], double gyro[3], double accel[3], double mag[3], double dt);
+    void update(double (&q_return)[4], double accel[3], double mag[3]);
+    void filter_update(double (&q_return)[4], double gyro[3], double accel[3], double mag[3], double dt);
 
 private:
     // Noise Parameter Variables

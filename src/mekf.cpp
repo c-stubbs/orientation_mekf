@@ -9,7 +9,7 @@ MEKF::MEKF(double gyro_noise, double accel_noise, double mag_noise)
     a_noise = pow(accel_noise, 2);
     m_noise = pow(mag_noise, 2);
 
-    proc_noise << g_noise, g_noise, g_noise; // noise vectors
+    proc_noise << g_noise, g_noise, g_noise;
     meas_noise << a_noise, a_noise, a_noise, m_noise, m_noise, m_noise;
 
     // Global Paramter Initialization
@@ -69,14 +69,14 @@ void MEKF::predict(double gyro[3], double dt)
     P = P + (-1.0*skew(omega)*P + P*skew(omega) + Q)*dt; 
 }
 
-void MEKF::update(double (&q_orient)[4], double accel[3], double mag[3])
+void MEKF::update(double (&q_return)[4], double accel[3], double mag[3])
 {
     a << accel[0], accel[1], accel[2];
     m << mag[0], mag[1], mag[2];
     // m = ((m-magcal_offset).transpose()*magcal_rotate).transpose(); // Calibrate the mag readings
     m = mag_ref; // Setting this to ignore mag measurements. RIP :(
 
-    // Eq 2.33 in Howard's Thesis: Basically just from global/intertial frame to body frame
+    // Eq 2.33 in Howard's Thesis: Basically just rotation from global/intertial frame to body frame
     C(0, 0) = pow(q(0), 2) + pow(q(1), 2) - pow(q(2), 2) - pow(q(3), 2);
     C(0, 1) = 2 * (q(1) * q(2) - q(0) * q(3));
     C(0, 2) = 2 * (q(0) * q(2) + q(1) * q(3));
@@ -116,22 +116,19 @@ void MEKF::update(double (&q_orient)[4], double accel[3], double mag[3])
     err_q << 1, 0.5 * err_x;
     q = quat_multiply(err_q, q).normalized();
 
-    // q = (q + err_x).normalized();
-
-    q_orient[0] = q[0];
-    q_orient[1] = q[1];
-    q_orient[2] = q[2];
-    q_orient[3] = q[3];
+    q_return[0] = q[0];
+    q_return[1] = q[1];
+    q_return[2] = q[2];
+    q_return[3] = q[3];
 
     // Eq 27 in Utrera
     P = P - K*H*P;
 }
 
-void MEKF::filter_update(double (&q_orient)[4], double gyro[3], double accel[3], double mag[3], double dt)
+void MEKF::filter_update(double (&q_return)[4], double gyro[3], double accel[3], double mag[3], double dt)
 {
     predict(gyro, dt);
-    // time_update(dt);
-    update(q_orient, accel, mag);
+    update(q_return, accel, mag);
 }
 
 Vector4d MEKF::quat_multiply(Vector4d a, Vector4d b)
