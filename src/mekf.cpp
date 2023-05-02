@@ -14,7 +14,8 @@ MEKF::MEKF(double gyro_noise, double accel_noise, double mag_noise)
 
     // Global Paramter Initialization
     g << 0, 0, -1; //initialize gravity **CHANGED FROM 9.81
-    mag_ref << 23161.2, -1862.9, 41935.2; // Computed prior, based on the AHRS github
+    // mag_ref << 23161.2, -1862.9, 41935.2; // Computed prior, based on the AHRS github
+    mag_ref << -46.588, 65.3055, 7.6486; // From WMM
     mag_ref = mag_ref.normalized();
     // Filter Initialization
     q << 1, 0, 0, 0; // initialize quaternion
@@ -22,11 +23,17 @@ MEKF::MEKF(double gyro_noise, double accel_noise, double mag_noise)
     Q = proc_noise.asDiagonal(); // initialize process & measurement noise covariance
     R = meas_noise.asDiagonal();
 
-    W.setIdentity(); // initialize state estimate Jacobian & state estimate covariance
-    P = W * Q * W.transpose();
+    // W.setIdentity();
+    // P = W * Q * W.transpose();
+    P = Q; // Initialize covariance
 
-    magcal_offset << -16.8557, 48.4432, 25.2809; // From MATLAB
-    magcal_rotate.setIdentity(); // From MATLAB
+    // magcal_offset << -16.8557, 48.4432, 25.2809; // From MATLAB
+    // magcal_rotate.setIdentity(); // From MATLAB
+
+    magcal_offset << -42.8444, 72.2708, -38.5865;
+    Vector3d magcal_rotate_vals;
+    magcal_rotate_vals << 1.0773, 0.8575, 1.0826;
+    magcal_rotate = magcal_rotate_vals.asDiagonal();
 }
 
 void MEKF::predict(double gyro[3], double dt)
@@ -66,7 +73,8 @@ void MEKF::update(double (&q_orient)[4], double accel[3], double mag[3])
 {
     a << accel[0], accel[1], accel[2];
     m << mag[0], mag[1], mag[2];
-    m = (m-magcal_offset); // Calibrate the mag readings
+    // m = ((m-magcal_offset).transpose()*magcal_rotate).transpose(); // Calibrate the mag readings
+    m = mag_ref; // Setting this to ignore mag measurements. RIP :(
 
     // Eq 2.33 in Howard's Thesis: Basically just from global/intertial frame to body frame
     C(0, 0) = pow(q(0), 2) + pow(q(1), 2) - pow(q(2), 2) - pow(q(3), 2);

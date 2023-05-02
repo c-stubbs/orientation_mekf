@@ -31,7 +31,7 @@ private:
     rclcpp::Subscription<sensor_msgs::msg::MagneticField>::SharedPtr _mag_sub;
 
     //MEKF mekf = MEKF(0.05, 0.05, 0.025);
-    MEKF mekf = MEKF(0.05,0.1,1.5);
+    MEKF mekf = MEKF(0.15,0.41,200);
     std::shared_ptr<tf2_ros::TransformBroadcaster> br;
 
     double accel[3] = {0.1, 0.1, 0.1};

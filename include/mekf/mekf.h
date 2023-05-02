@@ -53,7 +53,7 @@ private:
     Vector3d magcal_offset; // Magnetic field calibration offset
     Matrix<double,3,3> magcal_rotate; // Magnetic field calibration rotation
     Matrix<double, 6, 1> z; // Measurement vector
-
+    
     Matrix<double, 6, 1> h; // predicted state
     Matrix<double, 6, 1> y; // innovation/residual
     Matrix<double, 6, 3> H; // measurement sensitivity matrix. See Markley 2003, Utrera 2021
