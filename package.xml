@@ -3,9 +3,9 @@
 <package format="3">
   <name>mekf</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="chandler.stubbs99@gmail.com">chandler</maintainer>
-  <license>TODO: License declaration</license>
+  <description>Simple MEKF orientation estimation in ROS2.</description>
+  <maintainer email="chandlertstubbs@gmail.com">Chandler Stubbs</maintainer>
+  <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
