@@ -38,7 +38,8 @@ private:
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr _yaw_pub;
 
     //MEKF mekf = MEKF(0.05, 0.05, 0.025);
-    MEKF mekf = MEKF(0.15,0.41,200);
+    // MEKF mekf = MEKF(0.05,1.64,200);
+     MEKF mekf = MEKF(0.05,0.167,200);
     std::shared_ptr<tf2_ros::TransformBroadcaster> br;
 
     double accel[3] = {0.1, 0.1, 0.1};
